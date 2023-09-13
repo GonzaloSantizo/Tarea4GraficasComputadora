@@ -91,16 +91,17 @@ class Raytracer(object):
 
                         for light in self.lights:
                             if light.lightType == "Ambient":
-                                ambientLightColor[0] += light.getLightColor()[0]
-                                ambientLightColor[1] += light.getLightColor()[1]
-                                ambientLightColor[2] += light.getLightColor()[2]
+
+                                ambientLightColor = [(ambientLightColor[i] + light.getLightColor()[i]) for i in range(3) ]
+
+                            else:
+                                diffuseLightColor = [(diffuseLightColor[i] + light.getDiffuseColor(intercept)[i]) for i in range(3) ]
+
                         
-                        lightColor = ambientLightColor
+                        lightColor = [ambientLightColor[i] + diffuseLightColor[i] for i in range(3)]
 
 
-                        finalColor = [surfaceColor[0] * lightColor[0],
-                                      surfaceColor[1] * lightColor[1],
-                                      surfaceColor[2] * lightColor[2]]
+                        finalColor = [min(1, surfaceColor[i] * lightColor[i]) for i in range(3)]
 
                         self.rtPoint(x,y, finalColor)
 
