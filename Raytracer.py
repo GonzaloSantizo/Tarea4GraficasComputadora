@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from rt import Raytracer
+from figures import *
 
 width = 512
 height = 512
@@ -13,6 +14,9 @@ screen.set_alpha(None)
 raytracer = Raytracer(screen)
 raytracer.rtClearColor(0.25,0.25,0.25)
 
+
+raytracer.scene.append(Sphere(position=(0,0,-5), radius = 1))
+
 isRunning = True
 while isRunning:
 
@@ -24,6 +28,9 @@ while isRunning:
                 isRunning == False
     
     raytracer.rtClear()
+
+
+
     raytracer.rtRender()    
     pygame.display.flip()
 
