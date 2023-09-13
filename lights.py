@@ -1,5 +1,13 @@
 import numpy as np
 
+
+def reflectVector(normal, direction):
+    reflect = 2 * np.dot(normal, direction)
+    reflect = np.multiply(reflect, normal)
+    reflect = np.subtract(reflect, direction)
+    reflect = reflect / np.linalg.norm(reflect)
+    return reflect
+
 class Light(object):
     def __init__(self, intensity = 1, color = (1,1,1), lightType = 'None'):
         self.intensity = intensity
@@ -14,7 +22,10 @@ class Light(object):
     
 
     def getDiffuseColor(self, intercept):
-        return self.getLightColor()
+        return None
+    
+    def getSpecularColor(self, intercept, viewPos):
+        return None
 
 
 class AmbientLight(Light):
@@ -28,7 +39,7 @@ class DirectionalLight(Light):
         super().__init__(intensity, color, "Directional")
 
     def getDiffuseColor(self, intercept):
-        lightColor = super().getDiffuseColor(intercept)
+        
 
         dir = [i *-1 for i in self.direction]
 
@@ -37,4 +48,19 @@ class DirectionalLight(Light):
 
         diffuseColor = [(i * intensity) for i in self.color]
         return diffuseColor
+    
+    def getSpecularColor(self, intercept, viewPos):
+        dir = [i * -1 for i in self.direction]
+
+        reflect = reflectVector(intercept.normal, dir)
+
+        viewDir = np.subtract(viewPos, intercept.point)
+        viewDir = viewDir / np.linalg.norm(viewDir)
+
+        specIntensity = max(0, np.dot(viewDir, reflect)) ** intercept.obj.material.spec
+        specIntensity *= self.intensity
+
+        specColor = [i * specIntensity for i in self.color]
+
+        return specColor
 

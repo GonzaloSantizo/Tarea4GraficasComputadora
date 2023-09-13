@@ -85,22 +85,21 @@ class Raytracer(object):
                     if intercept != None:
 
                         surfaceColor = intercept.obj.material.diffuse
-                        ambientLightColor = [0,0,0]
-                        diffuseLightColor = [0,0,0]
-                        specularLightColor = [0,0,0]
+                        ambientColor = [0,0,0]
+                        diffuseColor = [0,0,0]
+                        specularColor = [0,0,0]
 
                         for light in self.lights:
                             if light.lightType == "Ambient":
 
-                                ambientLightColor = [(ambientLightColor[i] + light.getLightColor()[i]) for i in range(3) ]
+                                ambientColor = [(ambientColor[i] + light.getLightColor()[i]) for i in range(3) ]
 
                             else:
-                                diffuseLightColor = [(diffuseLightColor[i] + light.getDiffuseColor(intercept)[i]) for i in range(3) ]
+                                diffuseColor = [(diffuseColor[i] + light.getDiffuseColor(intercept)[i]) for i in range(3)]
+                                specularColor = [(specularColor[i] + light.getSpecularColor(intercept, self.camPosition)[i]) for i in range(3)]
 
                         
-                        lightColor = [ambientLightColor[i] + diffuseLightColor[i] for i in range(3)]
-
-
+                        lightColor = [(ambientColor[i] + diffuseColor[i] + specularColor[i]) for i in range(3)]
                         finalColor = [min(1, surfaceColor[i] * lightColor[i]) for i in range(3)]
 
                         self.rtPoint(x,y, finalColor)
