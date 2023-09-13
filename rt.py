@@ -5,31 +5,28 @@ from figures import *
 class Raytracer(object):
     def __init__(self, screen):
         self.screen = screen
-        _,_, self.width, self.height = screen.get_rect()
-
+        _, _, self.width, self.height = screen.get_rect()
 
         self.scene = []
-        self.camPosition =  [0,0,0]
+        self.camPosition = [0, 0, 0]
 
-        self.rtViewPort(0, 0, self.width, self.height)
-        self.rtProyection
+        self.rtViewport(0, 0, self.width, self.height)
+        self.rtProyection()  # Fixed method call
         
-        self.rtColor(1,1,1)
-        self.rtClearColor(0,0,0)
+        self.rtColor(1, 1, 1)
+        self.rtClearColor(0, 0, 0)
         self.rtClear()
 
-
-    def rtViewPort(self, posX, posY, width, height):
+    def rtViewport(self, posX, posY, width, height):  # Corrected method name
         self.vpX = posX
         self.vpY = posY
-        self.vpWidth  = width
+        self.vpWidth = width
         self.vpHeight = height
 
-
-    def rtProyection(self, fov = 60, n = 0.1):
+    def rtProyection(self, fov=60, n=0.1):
         aspectRatio = self.vpWidth / self.vpHeight
-        self.nearPlane = n 
-        self.topEdge = tan((fov * pi / 180)/2) * self.nearPlane
+        self.nearPlane = n
+        self.topEdge = tan((fov * pi / 180) / 2) * self.nearPlane
         self.rightEdge = self.topEdge * aspectRatio
 
 

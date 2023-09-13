@@ -15,7 +15,8 @@ class Sphere(Shape):
     def ray_intersect(self, orig, dir):
         L = np.subtract(self.position, orig)
         lenghtL = np.linalg.norm(L)
-        tca = np.dot(L * dir)
+        tca = np.dot(L, dir)
+
         d = (lenghtL ** 2 - tca ** 2) ** 0.5
 
         if d > self.radius:
