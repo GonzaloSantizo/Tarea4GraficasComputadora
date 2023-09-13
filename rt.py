@@ -1,6 +1,7 @@
 from math import tan, pi
 import numpy as np
 from figures import *
+from lights import *
 
 class Raytracer(object):
     def __init__(self, screen):
@@ -8,6 +9,8 @@ class Raytracer(object):
         _, _, self.width, self.height = screen.get_rect()
 
         self.scene = []
+        self.lights = []
+
         self.camPosition = [0, 0, 0]
 
         self.rtViewport(0, 0, self.width, self.height)
@@ -54,11 +57,15 @@ class Raytracer(object):
 
     
     def rtCastRay(self, orig, dir):
+
+        intercept = None
+        hit = None
         
         for obj in self.scene:
-            if obj.ray_intersect(orig, dir):
-                return True
-        return False
+            intercept = obj.ray_intersect(orig, dir)
+            if intercept != None:
+                hit = intercept
+        return hit
 
 
     def rtRender(self):
@@ -74,5 +81,19 @@ class Raytracer(object):
                     direction = (Px, Py, -self.nearPlane)
                     direction = direction/np.linalg.norm(direction)
 
-                    if self.rtCastRay(self.camPosition, direction):
-                        self.rtPoint(x,y)
+                    intercept = self.rtCastRay(self.camPosition, direction)
+
+                    if intercept != None:
+                        material = intercept.obj.material
+
+                        colorP = list(material.diffuse)
+
+                        for light in self.lights: 
+                            if light.lightType == "Ambient":
+                                colorP[0] *= light.intensity * light.color[0]
+                                colorP[1] *= light.intensity * light.color[1]
+                                colorP[2] *= light.intensity * light.color[2]
+
+
+                        self.rtPoint(x,y, colorP)
+
