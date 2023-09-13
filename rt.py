@@ -1,7 +1,6 @@
 from math import tan, pi
 import numpy as np
 from figures import *
-from lights import *
 
 class Raytracer(object):
     def __init__(self, screen):
@@ -48,9 +47,9 @@ class Raytracer(object):
         y = self.width - y 
         if( 0 <=x < self.width ) and (0 <= y <self.height):
             if color != None:
-                color = (color[0] * 255,
-                         color[1] * 255,
-                         color[2] * 255)
+                color = (int(color[0] * 255),
+                         int(color[1] * 255),
+                         int(color[2] * 255))
                 self.screen.set_at((x,y), color)
             else:
                 self.screen.set_at((x,y), self.currColor)
@@ -87,13 +86,34 @@ class Raytracer(object):
                         material = intercept.obj.material
 
                         colorP = list(material.diffuse)
+                        AmbientLight = [0,0,0]
+                        DirectionalLight = [0,0,0]
 
                         for light in self.lights: 
                             if light.lightType == "Ambient":
-                                colorP[0] *= light.intensity * light.color[0]
-                                colorP[1] *= light.intensity * light.color[1]
-                                colorP[2] *= light.intensity * light.color[2]
+                                AmbientLight[0] += light.intensity * light.color[0]
+                                AmbientLight[1] += light.intensity * light.color[1]
+                                AmbientLight[2] += light.intensity * light.color[2]
 
+                            elif light.lightType == "Directional":
+                                lightDir = np.array(light.direction) * -1
+                                lightDir = lightDir / np.linalg.norm(lightDir)
+                                intensity = np.dot(intercept.normal, lightDir)
+                                intensity = max(0, min(1, intensity))
+
+
+                                DirectionalLight[0] += intensity * light.color[0]
+                                DirectionalLight[1] += intensity * light.color[1]
+                                DirectionalLight[2] += intensity * light.color[2]
+
+                        colorP[0] *= AmbientLight[0] + DirectionalLight[0]
+                        colorP[1] *= AmbientLight[1] + DirectionalLight[1]
+                        colorP[2] *= AmbientLight[2] + DirectionalLight[2]
+
+
+                        colorP[0] = min(1, colorP[0])
+                        colorP[1] = min(1, colorP[1])
+                        colorP[2] = min(1, colorP[2])
 
                         self.rtPoint(x,y, colorP)
 
