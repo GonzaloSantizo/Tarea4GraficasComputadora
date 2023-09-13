@@ -4,7 +4,13 @@ class Light(object):
     def __init__(self, intensity = 1, color = (1,1,1), lightType = 'None'):
         self.intensity = intensity
         self.color = color
-        self.lightType = "None"
+        self.lightType = lightType
+
+    
+    def getLightColor(self):
+        return [self.color[0] * self.intensity,
+                self.color[1] * self.intensity,
+                self.color[2] * self.intensity]
 
 
 class AmbientLight(Light):

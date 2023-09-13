@@ -5,8 +5,8 @@ from figures import *
 from lights import *
 from materials import *
 
-width = 512
-height = 512
+width = 256
+height = 256
 
 pygame.init()
 
@@ -21,7 +21,7 @@ brick = Material(diffuse = (1, 0.4, 0.4))
 raytracer.scene.append(Sphere(position=(0,0,-5), radius = 1, material=brick))
 
 raytracer.lights.append(AmbientLight(intensity = 0.1))
-raytracer.lights.append(DirectionalLight(direction=(0,-1,-1), intensity = 0.7))
+raytracer.lights.append(DirectionalLight(direction=(-1,-1,-1), intensity = 0.7))
 
 isRunning = True
 while isRunning:

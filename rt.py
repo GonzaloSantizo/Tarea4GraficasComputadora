@@ -83,37 +83,24 @@ class Raytracer(object):
                     intercept = self.rtCastRay(self.camPosition, direction)
 
                     if intercept != None:
-                        material = intercept.obj.material
 
-                        colorP = list(material.diffuse)
-                        AmbientLight = [0,0,0]
-                        DirectionalLight = [0,0,0]
+                        surfaceColor = intercept.obj.material.diffuse
+                        ambientLightColor = [0,0,0]
+                        diffuseLightColor = [0,0,0]
+                        specularLightColor = [0,0,0]
 
-                        for light in self.lights: 
+                        for light in self.lights:
                             if light.lightType == "Ambient":
-                                AmbientLight[0] += light.intensity * light.color[0]
-                                AmbientLight[1] += light.intensity * light.color[1]
-                                AmbientLight[2] += light.intensity * light.color[2]
-
-                            elif light.lightType == "Directional":
-                                lightDir = np.array(light.direction) * -1
-                                lightDir = lightDir / np.linalg.norm(lightDir)
-                                intensity = np.dot(intercept.normal, lightDir)
-                                intensity = max(0, min(1, intensity))
+                                ambientLightColor[0] += light.getLightColor()[0]
+                                ambientLightColor[1] += light.getLightColor()[1]
+                                ambientLightColor[2] += light.getLightColor()[2]
+                        
+                        lightColor = ambientLightColor
 
 
-                                DirectionalLight[0] += intensity * light.color[0]
-                                DirectionalLight[1] += intensity * light.color[1]
-                                DirectionalLight[2] += intensity * light.color[2]
+                        finalColor = [surfaceColor[0] * lightColor[0],
+                                      surfaceColor[1] * lightColor[1],
+                                      surfaceColor[2] * lightColor[2]]
 
-                        colorP[0] *= AmbientLight[0] + DirectionalLight[0]
-                        colorP[1] *= AmbientLight[1] + DirectionalLight[1]
-                        colorP[2] *= AmbientLight[2] + DirectionalLight[2]
-
-
-                        colorP[0] = min(1, colorP[0])
-                        colorP[1] = min(1, colorP[1])
-                        colorP[2] = min(1, colorP[2])
-
-                        self.rtPoint(x,y, colorP)
+                        self.rtPoint(x,y, finalColor)
 
